@@ -1,0 +1,14 @@
+.ProseMirror {
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Georgia', serif; /* Classic creative writing feel */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto; /* Center the page */
+}
+
+/* Remove the ugly blue outline when clicking */
+.ProseMirror:focus {
+  outline: none;
+}

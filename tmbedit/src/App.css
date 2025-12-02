@@ -1,0 +1,392 @@
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafb);
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #2c3e50;
+  --toolbar-bg: #f8f9fa;
+  --toolbar-border: #e9ecef;
+  --accent-color: #007bff;
+  --editor-font-size: 1.1rem;
+  --editor-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--editor-font-family);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: auto;
+  /* Avoid optimizeLegibility which can cause layout shifts */
+}
+
+#root {
+  height: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--toolbar-bg);
+  border-bottom: 1px solid var(--toolbar-border);
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.toolbar-title {
+  font-weight: 600;
+  color: #6c757d;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 1rem;
+}
+
+.toolbar-btn {
+  background: none;
+  border: 1px solid transparent;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #495057;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-btn:hover {
+  background-color: #e9ecef;
+}
+
+.toolbar-btn.active {
+  background-color: #e7f1ff;
+  color: var(--accent-color);
+  border-color: #b6d4fe;
+}
+
+.separator-vertical {
+    width: 1px;
+    height: 24px;
+    background-color: #dee2e6;
+    margin: 0 0.25rem;
+}
+
+/* Settings Menu */
+.settings-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid var(--toolbar-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 1rem;
+    z-index: 100;
+    min-width: 200px;
+}
+
+.settings-section {
+    margin-bottom: 1rem;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-section label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+.settings-options {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.settings-options button {
+    flex: 1;
+    padding: 0.4rem;
+    font-size: 0.85rem;
+}
+
+.editor-container {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.editor-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tiptap Editor Styles */
+.ProseMirror {
+  min-height: 100%;
+  padding: 2rem;
+  outline: none;
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: var(--editor-font-size);
+  font-family: var(--editor-font-family);
+  line-height: 1.7;
+  color: var(--text-color);
+}
+
+.ProseMirror>*+* {
+  margin-top: 0.75em;
+}
+
+.ProseMirror p {
+  margin-bottom: 1em;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  line-height: 1.2;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.ProseMirror h1 {
+  font-size: 2.25em;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 0.3em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.8em;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 0.3em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.5em;
+}
+
+.ProseMirror h4 {
+  font-size: 1.25em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding: 0 1.5rem;
+  margin-bottom: 1em;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  color: #4b5563;
+  font-style: normal;
+  /* Was defaulting to italic in some prose styles */
+}
+
+.ProseMirror pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  font-family: 'Fira Code', 'Roboto Mono', monospace;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+.ProseMirror code {
+  background-color: #f1f1f1;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Roboto Mono', monospace;
+  font-size: 0.9em;
+  color: #c7254e;
+}
+
+.ProseMirror pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.9em;
+}
+
+.ProseMirror strong {
+  font-weight: 700;
+  color: #000;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 2px solid #eaeaea;
+  margin: 2rem 0;
+}
+
+.ProseMirror a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover {
+  text-decoration: none;
+}
+
+/* Source Mode Textarea */
+textarea {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  border: none;
+  resize: none;
+  font-family: 'Fira Code', 'Roboto Mono', monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+  max-width: 800px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Spell Check Styles */
+.spell-error {
+  text-decoration: underline wavy red;
+  text-underline-position: under;
+  /* Fallback for browsers that don't support wavy underline nicely */
+  border-bottom: 2px dotted red;
+  background-color: rgba(255, 0, 0, 0.1);
+  /* Light red background to be very obvious */
+}
+
+.footer {
+  padding: 0.5rem 1rem;
+  background-color: var(--toolbar-bg);
+  border-top: 1px solid var(--toolbar-border);
+  font-size: 0.85rem;
+  color: #6c757d;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.separator {
+  color: #adb5bd;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f0f0f;
+  background-color: #ffffff;
+  transition: border-color 0.25s;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #396cd8;
+}
+
+button:active {
+  border-color: #396cd8;
+  background-color: #e8e8e8;
+}
+
+input,
+button {
+  outline: none;
+}
+
+#greet-input {
+  margin-right: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+
+  a:hover {
+    color: #24c8db;
+  }
+
+  input,
+  button {
+    color: #ffffff;
+    background-color: #0f0f0f98;
+  }
+
+  button:active {
+    background-color: #0f0f0f69;
+  }
+}
