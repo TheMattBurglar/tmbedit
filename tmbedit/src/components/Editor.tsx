@@ -74,7 +74,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
                     const target = event.target as HTMLElement;
                     if (target.classList.contains('spell-error')) {
                         event.preventDefault();
-                        return true;
+                        return false;
                     }
                     return false;
                 }
