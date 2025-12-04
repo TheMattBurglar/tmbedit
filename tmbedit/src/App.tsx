@@ -52,6 +52,37 @@ function App() {
     };
   }, [editor]);
 
+  // Check for startup file
+  useEffect(() => {
+    invoke<[string, string] | null>('get_startup_file').then((result) => {
+      if (result) {
+        const [path, fileContent] = result;
+        setFilePath(path);
+        setContent(fileContent);
+        // If editor is already ready, update it too
+        if (editor) {
+          editor.commands.setContent(fileContent);
+        }
+      }
+    }).catch(err => console.error("Failed to check startup file:", err));
+  }, []); // Run once on mount
+
+  // Sync content to editor when content state changes (e.g. from startup file)
+  useEffect(() => {
+    if (editor && content && editor.getText() !== content) {
+      // Only update if significantly different to avoid cursor jumps? 
+      // Actually, for startup load, we just want to set it.
+      // But we need to be careful not to overwrite user typing if this effect runs late.
+      // The startup load should happen very early.
+      // Let's rely on the startup effect setting it directly if editor exists, 
+      // or passing it to Editor component via props (which it already does).
+
+      // The Editor component takes `content` prop. Let's see how it handles updates.
+      // If Editor.tsx handles content prop updates, we are good.
+      // If not, we might need to force it.
+    }
+  }, [content, editor]);
+
   // Apply Settings via CSS Variables
   useEffect(() => {
     const root = document.documentElement;

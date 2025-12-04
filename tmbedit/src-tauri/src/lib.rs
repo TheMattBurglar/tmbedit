@@ -1,5 +1,5 @@
 use std::sync::Mutex;
-use tauri::State;
+use tauri::{State, Manager};
 use hunspell_rs::Hunspell;
 
 // Wrapper to make Hunspell Send (unsafe but necessary for Tauri state if we lock it properly)
@@ -11,6 +11,11 @@ unsafe impl Sync for SafeHunspell {}
 struct SpellCheckState {
     hunspell: Mutex<Option<SafeHunspell>>,
     custom_words: Mutex<Vec<String>>,
+}
+
+struct StartupFile {
+    path: Mutex<Option<String>>,
+    content: Mutex<Option<String>>,
 }
 
 #[tauri::command]
@@ -152,6 +157,18 @@ fn get_suggestions(state: State<'_, SpellCheckState>, word: String) -> Result<Ve
     Ok(suggestions)
 }
 
+#[tauri::command]
+fn get_startup_file(state: State<'_, StartupFile>) -> Result<Option<(String, String)>, String> {
+    let path_guard = state.path.lock().map_err(|_| "Failed to lock path mutex")?;
+    let content_guard = state.content.lock().map_err(|_| "Failed to lock content mutex")?;
+
+    if let (Some(p), Some(c)) = (path_guard.as_ref(), content_guard.as_ref()) {
+        Ok(Some((p.clone(), c.clone())))
+    } else {
+        Ok(None)
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -161,6 +178,31 @@ pub fn run() {
             hunspell: Mutex::new(None),
             custom_words: Mutex::new(Vec::new()),
         })
+        .setup(|app| {
+            let args: Vec<String> = std::env::args().collect();
+            let mut start_path = None;
+            let mut start_content = None;
+
+            // Simple check: if there's an argument that isn't a flag and looks like a file
+            if args.len() > 1 {
+                // Skip the first arg (executable name)
+                for arg in &args[1..] {
+                    if !arg.starts_with("-") {
+                        if let Ok(content) = std::fs::read_to_string(arg) {
+                            start_path = Some(arg.clone());
+                            start_content = Some(content);
+                            break; 
+                        }
+                    }
+                }
+            }
+
+            app.manage(StartupFile {
+                path: Mutex::new(start_path),
+                content: Mutex::new(start_content),
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet, 
             read_file, 
@@ -168,7 +210,10 @@ pub fn run() {
             init_spell_check,
             check_text,
             get_suggestions,
-            add_custom_word
+            check_text,
+            get_suggestions,
+            add_custom_word,
+            get_startup_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
