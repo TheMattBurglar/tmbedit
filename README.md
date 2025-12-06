@@ -14,21 +14,10 @@
 *   **Spell Check**: Integrated spell checking powered by **Hunspell** (the same engine used by LibreOffice and Firefox).
 *   **Customizable**: Adjust font size and family (Sans, Serif, Mono) to suit your writing style.
 
-## Installation
+### Installation
+Since this project does not currently distribute pre-built binaries, the best way to install it is to build it from source.
 
-### Linux
-
-**Fedora / RHEL / CentOS:**
-Download the `.rpm` package from the releases page (or `target/release/bundle/rpm/`) and install it:
-```bash
-sudo dnf install ./tmbedit-0.1.0-1.x86_64.rpm
-```
-
-**Debian / Ubuntu:**
-Download the `.deb` package and install it:
-```bash
-sudo apt install ./tmbedit_0.1.0_amd64.deb
-```
+See the **Development** section below for instructions on how to build and run the application locally. Once built, you can find the installer packages in `src-tauri/target/release/bundle/`.
 
 ## Development
 
