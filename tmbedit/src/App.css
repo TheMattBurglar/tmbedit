@@ -7,13 +7,59 @@
 }
 
 :root {
+  --editor-font-size: 1.1rem;
+  --editor-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+[data-theme='light'] {
   --bg-color: #ffffff;
   --text-color: #2c3e50;
   --toolbar-bg: #f8f9fa;
   --toolbar-border: #e9ecef;
   --accent-color: #007bff;
-  --editor-font-size: 1.1rem;
-  --editor-font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --button-hover: #e9ecef;
+  --button-active-bg: #e7f1ff;
+  --button-active-text: #007bff;
+  --button-active-border: #b6d4fe;
+  --settings-bg: #ffffff;
+  --settings-shadow: rgba(0, 0, 0, 0.15);
+  --input-bg: #ffffff;
+  --input-text: #0f0f0f;
+  --input-border: transparent;
+  --separator-color: #dee2e6;
+  --blockquote-border: #e5e7eb;
+  --blockquote-text: #4b5563;
+  --headers-color: #1a1a1a;
+  --code-bg: #2d2d2d;
+  --code-text: #f8f8f2;
+  --bold-color: #000000;
+}
+
+[data-theme='dark'] {
+  --bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --toolbar-bg: #252526;
+  --toolbar-border: #333333;
+  --accent-color: #4daafc;
+  --button-hover: #333333;
+  --button-active-bg: #094771;
+  /* Visual Studio Code blue-ish selection */
+  --button-active-text: #ffffff;
+  --button-active-border: #007acc;
+  --settings-bg: #252526;
+  --settings-shadow: rgba(0, 0, 0, 0.5);
+  --input-bg: #3c3c3c;
+  --input-text: #cccccc;
+  --input-border: #333333;
+  --separator-color: #454545;
+  --blockquote-border: #4a4a4a;
+  --blockquote-text: #a0a0a0;
+  --headers-color: #ffffff;
+  --code-bg: #111111;
+  /* Darker than editor bg */
+  /* Match editor bg or slightly different */
+  --code-text: #d4d4d4;
+  --bold-color: #ffffff;
 }
 
 *,
@@ -65,7 +111,7 @@ body {
 
 .toolbar-title {
   font-weight: 600;
-  color: #6c757d;
+  color: var(--text-color);
   flex: 1;
   text-align: center;
   white-space: nowrap;
@@ -81,7 +127,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #495057;
+  color: var(--text-color);
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -89,62 +135,62 @@ body {
 }
 
 .toolbar-btn:hover {
-  background-color: #e9ecef;
+  background-color: var(--button-hover);
 }
 
 .toolbar-btn.active {
-  background-color: #e7f1ff;
-  color: var(--accent-color);
-  border-color: #b6d4fe;
+  background-color: var(--button-active-bg);
+  color: var(--button-active-text);
+  border-color: var(--button-active-border);
 }
 
 .separator-vertical {
-    width: 1px;
-    height: 24px;
-    background-color: #dee2e6;
-    margin: 0 0.25rem;
+  width: 1px;
+  height: 24px;
+  background-color: var(--separator-color);
+  margin: 0 0.25rem;
 }
 
 /* Settings Menu */
 .settings-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 0.5rem;
-    background: white;
-    border: 1px solid var(--toolbar-border);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    padding: 1rem;
-    z-index: 100;
-    min-width: 200px;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--settings-bg);
+  border: 1px solid var(--toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px var(--settings-shadow);
+  padding: 1rem;
+  z-index: 100;
+  min-width: 200px;
 }
 
 .settings-section {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .settings-section:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .settings-section label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #6c757d;
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
 }
 
 .settings-options {
-    display: flex;
-    gap: 0.25rem;
+  display: flex;
+  gap: 0.25rem;
 }
 
 .settings-options button {
-    flex: 1;
-    padding: 0.4rem;
-    font-size: 0.85rem;
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 0.85rem;
 }
 
 .editor-container {
@@ -190,7 +236,7 @@ body {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--headers-color);
 }
 
 .ProseMirror h1 {
@@ -232,18 +278,18 @@ body {
 }
 
 .ProseMirror blockquote {
-  border-left: 3px solid #e5e7eb;
+  border-left: 3px solid var(--blockquote-border);
   padding-left: 1rem;
   margin-left: 0;
   margin-right: 0;
-  color: #4b5563;
+  color: var(--blockquote-text);
   font-style: normal;
   /* Was defaulting to italic in some prose styles */
 }
 
 .ProseMirror pre {
-  background: #2d2d2d;
-  color: #f8f8f2;
+  background: var(--code-bg);
+  color: var(--code-text);
   font-family: 'Fira Code', 'Roboto Mono', monospace;
   padding: 1rem;
   border-radius: 6px;
@@ -269,7 +315,8 @@ body {
 
 .ProseMirror strong {
   font-weight: 700;
-  color: #000;
+  font-weight: 700;
+  color: var(--bold-color);
 }
 
 .ProseMirror em {
@@ -304,8 +351,11 @@ textarea {
   line-height: 1.5;
   outline: none;
   max-width: 800px;
+  max-width: 800px;
   margin: 0 auto;
   display: block;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Spell Check Styles */
@@ -342,10 +392,11 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
+  color: var(--input-text);
+  background-color: var(--input-bg);
   transition: border-color 0.25s;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  border-color: var(--input-border);
 }
 
 button {
@@ -353,12 +404,12 @@ button {
 }
 
 button:hover {
-  border-color: #396cd8;
+  border-color: var(--accent-color);
 }
 
 button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+  border-color: var(--accent-color);
+  background-color: var(--button-hover);
 }
 
 input,
@@ -370,64 +421,45 @@ button {
   margin-right: 5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-
-  button:active {
-    background-color: #0f0f0f69;
-  }
-}
+/* Dark mode handled via data-theme attribute */
 
 /* Context Menu */
 .context-menu {
-    position: fixed;
-    z-index: 1000;
-    background-color: var(--bg-color);
-    border: 1px solid var(--toolbar-border);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 0.5rem 0;
-    min-width: 150px;
-    display: flex;
-    flex-direction: column;
+  position: fixed;
+  z-index: 1000;
+  background-color: var(--bg-color);
+  border: 1px solid var(--toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px var(--settings-shadow);
+  padding: 0.5rem 0;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
 }
 
 .context-menu-item {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    transition: background-color 0.2s;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
 }
 
 .context-menu-item:hover {
-    background-color: var(--toolbar-bg);
+  background-color: var(--toolbar-bg);
 }
 
 .context-menu-item.disabled {
-    color: #adb5bd;
-    cursor: default;
+  color: #adb5bd;
+  cursor: default;
 }
 
 .context-menu-item.disabled:hover {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 .context-menu-separator {
-    height: 1px;
-    background-color: var(--toolbar-border);
-    margin: 0.25rem 0;
+  height: 1px;
+  background-color: var(--toolbar-border);
+  margin: 0.25rem 0;
 }

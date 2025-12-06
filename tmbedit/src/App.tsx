@@ -35,6 +35,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [fontSize, setFontSize] = useState('medium'); // small, medium, large
   const [fontFamily, setFontFamily] = useState('sans'); // sans, serif, mono
+  const [theme, setTheme] = useState('light'); // light, dark
 
   // Force re-render to update button states
   const [, setForceUpdate] = useState(0);
@@ -99,7 +100,9 @@ function App() {
     if (fontFamily === 'mono') familyValue = "'Fira Code', monospace";
     root.style.setProperty('--editor-font-family', familyValue);
 
-  }, [fontSize, fontFamily]);
+    // Theme
+    root.setAttribute('data-theme', theme);
+  }, [fontSize, fontFamily, theme]);
 
 
   const handleNew = async () => {
@@ -233,6 +236,13 @@ function App() {
                     <button className={fontFamily === 'sans' ? 'active' : ''} onClick={() => setFontFamily('sans')}>Sans</button>
                     <button className={fontFamily === 'serif' ? 'active' : ''} onClick={() => setFontFamily('serif')}>Serif</button>
                     <button className={fontFamily === 'mono' ? 'active' : ''} onClick={() => setFontFamily('mono')}>Mono</button>
+                  </div>
+                </div>
+                <div className="settings-section">
+                  <label>Theme</label>
+                  <div className="settings-options">
+                    <button className={theme === 'light' ? 'active' : ''} onClick={() => setTheme('light')}>Light</button>
+                    <button className={theme === 'dark' ? 'active' : ''} onClick={() => setTheme('dark')}>Dark</button>
                   </div>
                 </div>
               </div>
