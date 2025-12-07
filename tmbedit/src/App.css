@@ -358,15 +358,6 @@ textarea {
   color: var(--text-color);
 }
 
-/* Spell Check Styles */
-.spell-error {
-  text-decoration: underline wavy red;
-  text-underline-position: under;
-  /* Fallback for browsers that don't support wavy underline nicely */
-  border-bottom: 2px dotted red;
-  background-color: rgba(255, 0, 0, 0.1);
-  /* Light red background to be very obvious */
-}
 
 .footer {
   padding: 0.5rem 1rem;
@@ -423,6 +414,18 @@ button {
 
 /* Dark mode handled via data-theme attribute */
 
+/* Dark mode handled via data-theme attribute */
+
+/* Spell Check Styles */
+.spell-error {
+  text-decoration: underline wavy red;
+  text-underline-position: under;
+  /* Fallback for browsers that don't support wavy underline nicely */
+  border-bottom: 2px dotted red;
+  background-color: rgba(255, 0, 0, 0.1);
+  /* Light red background to be very obvious */
+}
+
 /* Context Menu */
 .context-menu {
   position: fixed;
@@ -435,6 +438,67 @@ button {
   min-width: 150px;
   display: flex;
   flex-direction: column;
+}
+
+/* Source Mode (CodeEditor + PrismJS) overrides */
+.source-editor-container {
+  background-color: var(--bg-color);
+}
+
+.source-editor-code textarea {
+  outline: none;
+}
+
+/* PrismJS Markdown Overrides */
+/* Ensure default text color matches our theme */
+.source-editor-code pre {
+  color: var(--text-color) !important;
+  text-shadow: none !important;
+}
+
+.token.comment,
+.token.blockquote {
+  color: var(--blockquote-text) !important;
+}
+
+.token.punctuation {
+  color: #999;
+}
+
+.token.bold {
+  font-weight: bold;
+  color: var(--bold-color) !important;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.title {
+  color: var(--accent-color) !important;
+  font-weight: bold;
+}
+
+.token.list {
+  color: var(--accent-color);
+}
+
+.token.code {
+  color: var(--code-text);
+  background: var(--code-bg);
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+}
+
+.token.hr {
+  color: #999;
+  border: none;
+}
+
+/* Make blockquotes look distinct */
+.token.blockquote {
+  display: inline-block;
+  /* Helps with background if we wanted it */
 }
 
 .context-menu-item {

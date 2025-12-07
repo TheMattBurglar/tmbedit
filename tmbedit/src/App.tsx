@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import Editor from "./components/Editor";
 import { open, save } from '@tauri-apps/plugin-dialog';
@@ -36,6 +36,23 @@ function App() {
   const [fontSize, setFontSize] = useState('medium'); // small, medium, large
   const [fontFamily, setFontFamily] = useState('sans'); // sans, serif, mono
   const [theme, setTheme] = useState('light'); // light, dark
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setShowSettings(false);
+      }
+    };
+
+    if (showSettings) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSettings]);
 
   // Force re-render to update button states
   const [, setForceUpdate] = useState(0);
@@ -211,7 +228,7 @@ function App() {
 
           <div className="separator-vertical"></div>
 
-          <div className="settings-wrapper" style={{ position: 'relative' }}>
+          <div className="settings-wrapper" style={{ position: 'relative' }} ref={settingsRef}>
             <button
               className={`toolbar-btn ${showSettings ? 'active' : ''}`}
               onClick={() => setShowSettings(!showSettings)}

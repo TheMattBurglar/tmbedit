@@ -6,6 +6,10 @@ import CharacterCount from '@tiptap/extension-character-count';
 import { SpellCheck } from '../extensions/SpellCheck';
 
 import ContextMenu from './ContextMenu';
+import CodeEditor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/themes/prism.css'; // Basic theme, overridden by App.css
 
 interface EditorProps {
     content: string;
@@ -99,9 +103,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
                     // Fix blank lines between blockquotes (Tiptap serializes empty blockquote lines as blank)
                     .replace(/(^>.*$)\n\n(^>)/gm, '$1\n> \n$2');
 
-                // console.log("Generated Markdown (Sanitized):", newContent.substring(newContent.indexOf("Nailed it") - 20, newContent.indexOf("Nailed it") + 20));
-
-                // Only update if content actually changed to avoid loops
+                // Using direct string comparison for now if needed similar to previous logic
                 if (newContent !== lastEmittedContent.current) {
                     lastEmittedContent.current = newContent;
                     onChange(newContent);
@@ -129,8 +131,8 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
 
     // Sync content when it changes externally (e.g. from loading a file or switching modes)
     useEffect(() => {
-        if (editor && content && !isSourceMode) {
-            // If the content is what we just emitted, don't reset the editor
+        if (editor && content) {
+            // Prevent loop if content matches last emitted
             if (content === lastEmittedContent.current) {
                 return;
             }
@@ -138,11 +140,6 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
             isRestoring.current = true;
 
             // Sanitize content to fix common parsing issues
-            // 1. Fix double spaces in blockquotes (>  text -> > text)
-            // 2. Fix escaped blockquotes (\*&gt; -> >) and (\*> -> >)
-            // Note: In Regex, to match a literal backslash, we need \\. In JS string, that's \\\\.
-            // But here we are using regex literals. /\\/ matches a single backslash.
-            // So /\\\*/ matches \* (backslash asterisk).
             const sanitized = content
                 .replace(/^>  /gm, '> ')
                 .replace(/\\\*&gt;/g, '>') // Matches \*&gt; ? No, wait. /\\/ matches \. /\*/ matches *. So /\\\*/ matches \*.
@@ -154,32 +151,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
                 .replace(/^\*&gt;/gm, '>')   // Handle *&gt; at start of line
                 .replace(/^>$/gm, '> '); // Normalize bare > to > with space
 
-            // console.log("Loading Content (Raw):", content.substring(content.indexOf("Nailed it") - 20, content.indexOf("Nailed it") + 20));
-            // console.log("Loading Content (Sanitized):", sanitized.substring(sanitized.indexOf("Nailed it") - 20, sanitized.indexOf("Nailed it") + 20));
-
-            // Debug: Log parsed tokens
-            const parser = (editor.storage as any).markdown.parser;
-            if (parser) {
-                // const tokens = parser.parse(sanitized, {});
-                // console.log("Markdown Tokens:", JSON.stringify(tokens, null, 2));
-            }
-
             editor.commands.setContent(sanitized);
-            // console.log("Editor HTML after load:", editor.getHTML());
-            // console.log("Editor JSON after load:", JSON.stringify(editor.getJSON(), null, 2));
-
-            // Update lastEmittedContent to match what we just loaded
-            // This prevents the subsequent onUpdate from triggering another onChange if it matches
-            // But onUpdate will fire with the *parsed* content, which might differ from sanitized.
-            // So we should probably let onUpdate handle the sync.
-            // However, if we don't update lastEmittedContent here, and onUpdate fires with the SAME content,
-            // it will call onChange, which is fine.
-            // But if onUpdate DOESN'T fire (e.g. setContent doesn't trigger it? It usually does),
-            // then we are out of sync.
-
-            // Actually, setContent DOES trigger onUpdate.
-            // So onUpdate will run, get the markdown, and call onChange.
-            // So lastEmittedContent will be updated there.
 
             // Restore cursor position when switching back to WYSIWYG
             setTimeout(() => {
@@ -207,6 +179,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
             textarea.focus();
         }
     }, [isSourceMode]);
+
 
     // Handle Context Menu via Wrapper
     const handleContextMenu = (e: React.MouseEvent) => {
@@ -266,35 +239,21 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
 
     if (isSourceMode) {
         return (
-            <textarea
-                ref={textareaRef}
-                value={content}
-                onChange={(e) => onChange(e.target.value)}
-                className="source-editor"
-                onSelect={(e) => {
-                    cursorPos.current = e.currentTarget.selectionStart;
-                }}
-                onClick={(e) => {
-                    cursorPos.current = e.currentTarget.selectionStart;
-                }}
-                onKeyUp={(e) => {
-                    cursorPos.current = e.currentTarget.selectionStart;
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Tab') {
-                        e.preventDefault();
-                        const target = e.target as HTMLTextAreaElement;
-                        const start = target.selectionStart;
-                        const end = target.selectionEnd;
-                        const value = target.value;
-                        target.value = value.substring(0, start) + '    ' + value.substring(end);
-                        target.selectionStart = target.selectionEnd = start + 4;
-                        onChange(target.value);
-                        cursorPos.current = target.selectionStart;
-                    }
-                }}
-                spellCheck={true}
-            />
+            <div className="source-editor-container" style={{ height: '100%', overflow: 'auto' }}>
+                <CodeEditor
+                    value={content}
+                    onValueChange={code => onChange(code)}
+                    highlight={code => highlight(code, languages.markdown, 'markdown')}
+                    padding={32} // Match the 2rem (32px) padding of the previous textarea
+                    className="source-editor-code"
+                    style={{
+                        fontFamily: '"Fira Code", "Roboto Mono", monospace',
+                        fontSize: '1rem',
+                        minHeight: '100%',
+                    }}
+                    textareaId="source-textarea"
+                />
+            </div>
         );
     }
 
