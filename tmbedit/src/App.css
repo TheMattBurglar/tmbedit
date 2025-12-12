@@ -30,8 +30,8 @@
   --blockquote-border: #e5e7eb;
   --blockquote-text: #4b5563;
   --headers-color: #1a1a1a;
-  --code-bg: #2d2d2d;
-  --code-text: #f8f8f2;
+  --code-bg: #eff1f3;
+  --code-text: #24292f;
   --bold-color: #000000;
 }
 
@@ -55,10 +55,8 @@
   --blockquote-border: #4a4a4a;
   --blockquote-text: #a0a0a0;
   --headers-color: #ffffff;
-  --code-bg: #111111;
-  /* Darker than editor bg */
-  /* Match editor bg or slightly different */
-  --code-text: #d4d4d4;
+  --code-bg: #343942;
+  --code-text: #adbac7;
   --bold-color: #ffffff;
 }
 
@@ -269,6 +267,14 @@ body {
   list-style-type: disc;
 }
 
+.ProseMirror ul ul {
+  list-style-type: circle;
+}
+
+.ProseMirror ul ul ul {
+  list-style-type: square;
+}
+
 .ProseMirror ol {
   list-style-type: decimal;
 }
@@ -298,12 +304,12 @@ body {
 }
 
 .ProseMirror code {
-  background-color: #f1f1f1;
+  background-color: var(--code-bg);
   padding: 0.2em 0.4em;
   border-radius: 4px;
   font-family: 'Fira Code', 'Roboto Mono', monospace;
   font-size: 0.9em;
-  color: #c7254e;
+  color: var(--code-text);
 }
 
 .ProseMirror pre code {
@@ -526,4 +532,42 @@ button {
   height: 1px;
   background-color: var(--toolbar-border);
   margin: 0.25rem 0;
+}
+
+/* Cheatsheet Menu */
+.cheatsheet-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  background: var(--settings-bg);
+  border: 1px solid var(--toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px var(--settings-shadow);
+  padding: 1rem;
+  z-index: 100;
+  min-width: 300px;
+}
+
+.cheatsheet-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.cheatsheet-grid span {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.cheatsheet-grid code {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Roboto Mono', monospace;
+  font-size: 0.85rem;
 }
