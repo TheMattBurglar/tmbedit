@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import Editor from "./components/Editor";
+import Notification from "./components/Notification";
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 import { Editor as TiptapEditor } from '@tiptap/react';
@@ -40,6 +41,7 @@ function App() {
   const [fontSize, setFontSize] = useState('medium'); // small, medium, large
   const [fontFamily, setFontFamily] = useState('sans'); // sans, serif, mono
   const [theme, setTheme] = useState('light'); // light, dark
+  const [notification, setNotification] = useState<string | null>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
   const cheatsheetRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +63,8 @@ function App() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showSettings, showCheatsheet]);
+
+
 
   // Force re-render to update button states
   const [, setForceUpdate] = useState(0);
@@ -174,11 +178,30 @@ function App() {
       if (path) {
         await invoke('write_file', { path, content });
         setFilePath(path);
+        setNotification("File Saved");
       }
     } catch (err) {
       console.error("Failed to save file:", err);
     }
   };
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        if (event.key === 'q') {
+          event.preventDefault();
+          await invoke('exit_app');
+        } else if (event.key === 's') {
+          event.preventDefault();
+          await handleSave();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSave]);
 
   return (
     <div className="app-container">
@@ -316,6 +339,12 @@ block
           {stats.misspelled} errors
         </span>
       </footer>
+      {notification && (
+        <Notification
+          message={notification}
+          onClose={() => setNotification(null)}
+        />
+      )}
     </div>
   );
 }

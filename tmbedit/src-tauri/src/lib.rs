@@ -1,6 +1,6 @@
-use std::sync::Mutex;
-use tauri::{State, Manager};
 use hunspell_rs::Hunspell;
+use std::sync::Mutex;
+use tauri::{Manager, State};
 
 // Wrapper to make Hunspell Send (unsafe but necessary for Tauri state if we lock it properly)
 struct SafeHunspell(Hunspell);
@@ -44,16 +44,28 @@ fn init_spell_check(
     // Try to find the dictionary files.
     // In dev mode, they might be in ../public/dictionaries relative to the crate root,
     // or relative to the executable.
-    
+
     let try_paths = vec![
         (aff_path.clone(), dic_path.clone()),
         // Fallback for dev mode (relative to CWD which is often src-tauri or project root)
-        (format!("../public/dictionaries/en_US.aff"), format!("../public/dictionaries/en_US.dic")),
-        (format!("public/dictionaries/en_US.aff"), format!("public/dictionaries/en_US.dic")),
+        (
+            format!("../public/dictionaries/en_US.aff"),
+            format!("../public/dictionaries/en_US.dic"),
+        ),
+        (
+            format!("public/dictionaries/en_US.aff"),
+            format!("public/dictionaries/en_US.dic"),
+        ),
         // Fallback relative to executable in target/debug
-        (format!("../../../public/dictionaries/en_US.aff"), format!("../../../public/dictionaries/en_US.dic")),
+        (
+            format!("../../../public/dictionaries/en_US.aff"),
+            format!("../../../public/dictionaries/en_US.dic"),
+        ),
         // Fallback for src-tauri/dictionaries
-        (format!("dictionaries/en_US.aff"), format!("dictionaries/en_US.dic")),
+        (
+            format!("dictionaries/en_US.aff"),
+            format!("dictionaries/en_US.dic"),
+        ),
     ];
 
     let mut hunspell = None;
@@ -62,29 +74,43 @@ fn init_spell_check(
         println!("Trying dictionary paths: aff={}, dic={}", aff, dic);
         // Check if files exist first to avoid Hunspell panic/failure
         if std::path::Path::new(&aff).exists() && std::path::Path::new(&dic).exists() {
-             hunspell = Some(Hunspell::new(&aff, &dic));
-             println!("Successfully loaded dictionaries from: {}", aff);
-             break;
+            hunspell = Some(Hunspell::new(&aff, &dic));
+            println!("Successfully loaded dictionaries from: {}", aff);
+            break;
         }
     }
 
     let hunspell = hunspell.ok_or("Failed to find dictionary files in any expected location")?;
-    
+
     let mut state_hunspell = state.hunspell.lock().map_err(|_| "Failed to lock mutex")?;
     *state_hunspell = Some(SafeHunspell(hunspell));
 
-    let mut state_custom = state.custom_words.lock().map_err(|_| "Failed to lock mutex")?;
+    let mut state_custom = state
+        .custom_words
+        .lock()
+        .map_err(|_| "Failed to lock mutex")?;
     *state_custom = custom_words;
-    println!("Spell Check Initialized with {} custom words", state_custom.len());
+    println!(
+        "Spell Check Initialized with {} custom words",
+        state_custom.len()
+    );
 
     Ok(())
 }
 
 #[tauri::command]
 fn add_custom_word(state: State<'_, SpellCheckState>, word: String) -> Result<(), String> {
-    let mut custom = state.custom_words.lock().map_err(|_| "Failed to lock mutex")?;
+    let mut custom = state
+        .custom_words
+        .lock()
+        .map_err(|_| "Failed to lock mutex")?;
     custom.push(word);
     Ok(())
+}
+
+#[tauri::command]
+fn exit_app() {
+    std::process::exit(0);
 }
 
 #[derive(serde::Serialize)]
@@ -97,13 +123,18 @@ struct ErrorRange {
 #[tauri::command]
 fn check_text(state: State<'_, SpellCheckState>, text: String) -> Result<Vec<ErrorRange>, String> {
     let hunspell_guard = state.hunspell.lock().map_err(|_| "Failed to lock mutex")?;
-    let safe_hunspell = hunspell_guard.as_ref().ok_or("Spell checker not initialized")?;
+    let safe_hunspell = hunspell_guard
+        .as_ref()
+        .ok_or("Spell checker not initialized")?;
     let hunspell = &safe_hunspell.0;
-    
-    let custom_guard = state.custom_words.lock().map_err(|_| "Failed to lock mutex")?;
+
+    let custom_guard = state
+        .custom_words
+        .lock()
+        .map_err(|_| "Failed to lock mutex")?;
 
     let mut errors = Vec::new();
-    
+
     // Simple regex for word splitting - matches frontend behavior
     let re = regex::Regex::new(r"\b\w+(?:['’]\w+)?\b").map_err(|e| e.to_string())?;
 
@@ -130,7 +161,7 @@ fn check_text(state: State<'_, SpellCheckState>, text: String) -> Result<Vec<Err
             }
 
             let normalized = word.replace("’", "'");
-            
+
             if !hunspell.check(word) && !hunspell.check(&normalized) {
                 let word_utf16_len = word.encode_utf16().count();
                 errors.push(ErrorRange {
@@ -149,7 +180,9 @@ fn check_text(state: State<'_, SpellCheckState>, text: String) -> Result<Vec<Err
 #[tauri::command]
 fn get_suggestions(state: State<'_, SpellCheckState>, word: String) -> Result<Vec<String>, String> {
     let hunspell_guard = state.hunspell.lock().map_err(|_| "Failed to lock mutex")?;
-    let safe_hunspell = hunspell_guard.as_ref().ok_or("Spell checker not initialized")?;
+    let safe_hunspell = hunspell_guard
+        .as_ref()
+        .ok_or("Spell checker not initialized")?;
     let hunspell = &safe_hunspell.0;
 
     let suggestions = hunspell.suggest(&word);
@@ -160,7 +193,10 @@ fn get_suggestions(state: State<'_, SpellCheckState>, word: String) -> Result<Ve
 #[tauri::command]
 fn get_startup_file(state: State<'_, StartupFile>) -> Result<Option<(String, String)>, String> {
     let path_guard = state.path.lock().map_err(|_| "Failed to lock path mutex")?;
-    let content_guard = state.content.lock().map_err(|_| "Failed to lock content mutex")?;
+    let content_guard = state
+        .content
+        .lock()
+        .map_err(|_| "Failed to lock content mutex")?;
 
     if let (Some(p), Some(c)) = (path_guard.as_ref(), content_guard.as_ref()) {
         Ok(Some((p.clone(), c.clone())))
@@ -191,7 +227,7 @@ pub fn run() {
                         if let Ok(content) = std::fs::read_to_string(arg) {
                             start_path = Some(arg.clone());
                             start_content = Some(content);
-                            break; 
+                            break;
                         }
                     }
                 }
@@ -204,8 +240,8 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            greet, 
-            read_file, 
+            greet,
+            read_file,
             write_file,
             init_spell_check,
             check_text,
@@ -213,7 +249,8 @@ pub fn run() {
             check_text,
             get_suggestions,
             add_custom_word,
-            get_startup_file
+            get_startup_file,
+            exit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
