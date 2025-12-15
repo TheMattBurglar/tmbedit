@@ -66,6 +66,10 @@ export const SpellCheck = Extension.create({
                                 dicPath,
                                 customWords: this.storage.customWords
                             });
+
+                            // Migration: Clear localStorage now that we've sent words to the backend
+                            localStorage.removeItem('customDictionary');
+
                             isInitialized = true;
                             console.log("Rust SpellCheck initialized");
 
@@ -95,7 +99,7 @@ export const SpellCheck = Extension.create({
 
                     this.storage.addWord = async (word: string) => {
                         this.storage.customWords.push(word);
-                        localStorage.setItem('customDictionary', JSON.stringify(this.storage.customWords));
+                        // localStorage persistence removed in favor of backend file storage
 
                         if (isInitialized) {
                             await invoke('add_custom_word', { word });

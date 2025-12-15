@@ -1,6 +1,6 @@
 # tmbedit
 
-**tmbedit** is a minimal, distraction-free Markdown editor designed for creative writers who want to focus on their words. Built with performance and privacy in mind, it combines the speed of a native application with the flexibility of modern web technologies.
+**tmbedit** is a minimal, distraction-free Markdown editor designed for creative writers. Built with performance and privacy in mind, it combines the speed of a native application with the flexibility of modern web technologies.
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
