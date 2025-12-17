@@ -97,6 +97,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
                     .replace(/\\\*>/g, '>')
                     .replace(/^\\&gt;/gm, '>')
                     .replace(/^&gt;/gm, '>')
+                    .replace(/&gt;/g, '>') // Global unescape of &gt; to >
                     .replace(/^\*>/gm, '>')
                     .replace(/^\*&gt;/gm, '>')
                     .replace(/^>$/gm, '> ')
@@ -147,6 +148,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
                 .replace(/\\\*>/g, '>')
                 .replace(/^\\&gt;/gm, '>')
                 .replace(/^&gt;/gm, '>')
+                .replace(/&gt;/g, '>') // Global unescape of &gt; to >
                 .replace(/^\*>/gm, '>')      // Handle *> at start of line
                 .replace(/^\*&gt;/gm, '>')   // Handle *&gt; at start of line
                 .replace(/^>$/gm, '> '); // Normalize bare > to > with space
