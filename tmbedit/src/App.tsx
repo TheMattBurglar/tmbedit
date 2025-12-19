@@ -5,6 +5,7 @@ import Notification from "./components/Notification";
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
 import { Editor as TiptapEditor } from '@tiptap/react';
+import { getSanitizedMarkdown } from './utils/markdown';
 
 // Icons
 const IconNew = () => (
@@ -176,7 +177,14 @@ function App() {
       }
 
       if (path) {
-        await invoke('write_file', { path, content });
+        // Force sync content if in WYSIWYG mode to get latest changes
+        let contentToSave = content;
+        if (!isSourceMode && editor) {
+          contentToSave = getSanitizedMarkdown(editor);
+          setContent(contentToSave);
+        }
+
+        await invoke('write_file', { path, content: contentToSave });
         setFilePath(path);
         setNotification("File Saved");
       }
@@ -216,7 +224,14 @@ function App() {
           </button>
           <button
             className={`toolbar-btn ${isSourceMode ? 'active' : ''}`}
-            onClick={() => setIsSourceMode(true)}
+            onClick={() => {
+              // Force sync before switching to Source Mode
+              if (!isSourceMode && editor) {
+                const newContent = getSanitizedMarkdown(editor);
+                setContent(newContent);
+              }
+              setIsSourceMode(true);
+            }}
             title="Source Mode"
           >
             <IconCode />

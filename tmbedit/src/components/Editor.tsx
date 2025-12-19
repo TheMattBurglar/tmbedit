@@ -4,6 +4,7 @@ import { Markdown } from 'tiptap-markdown';
 import { useEffect, useRef, useState } from 'react';
 import CharacterCount from '@tiptap/extension-character-count';
 import { SpellCheck } from '../extensions/SpellCheck';
+import { getSanitizedMarkdown } from '../utils/markdown';
 
 import ContextMenu from './ContextMenu';
 import CodeEditor from 'react-simple-code-editor';
@@ -88,34 +89,31 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
         onUpdate: ({ editor }) => {
             // We only want to trigger onChange if we are in WYSIWYG mode
             // If we are in source mode, the textarea handles the change
-            if (!isSourceMode) {
-                let newContent = (editor.storage as any).markdown.getMarkdown();
-
-                // Sanitize the generated markdown to fix serializer issues
-                newContent = newContent
-                    .replace(/\\\*&gt;/g, '>')
-                    .replace(/\\\*>/g, '>')
-                    .replace(/^\\&gt;/gm, '>')
-                    .replace(/^&gt;/gm, '>')
-                    .replace(/&gt;/g, '>') // Global unescape of &gt; to >
-                    .replace(/^\*>/gm, '>')
-                    .replace(/^\*&gt;/gm, '>')
-                    .replace(/^>$/gm, '> ')
-                    // Fix blank lines between blockquotes (Tiptap serializes empty blockquote lines as blank)
-                    .replace(/(^>.*$)\n\n(^>)/gm, '$1\n> \n$2');
-
-                // Using direct string comparison for now if needed similar to previous logic
-                if (newContent !== lastEmittedContent.current) {
-                    lastEmittedContent.current = newContent;
-                    onChange(newContent);
-                }
+            // Clear previous timeout if exists
+            if ((editor.storage as any).debounceTimeout) {
+                clearTimeout((editor.storage as any).debounceTimeout);
             }
 
-            // Update stats
-            const words = editor.storage.characterCount.words();
-            const characters = editor.storage.characterCount.characters();
-            const misspelled = (editor.storage as any).spellCheck?.errorCount || 0;
-            onStatsChange({ words, characters, misspelled });
+            if (!isSourceMode) {
+                // Debounce the update to avoid lag on every keystroke
+                const timeoutId = setTimeout(() => {
+                    const newContent = getSanitizedMarkdown(editor);
+                    if (newContent !== lastEmittedContent.current) {
+                        lastEmittedContent.current = newContent;
+                        onChange(newContent);
+                    }
+
+                    // Update stats (debounced)
+                    const words = editor.storage.characterCount.words();
+                    const characters = editor.storage.characterCount.characters();
+                    const misspelled = (editor.storage as any).spellCheck?.errorCount || 0;
+                    onStatsChange({ words, characters, misspelled });
+
+                }, 750); // 750ms debounce
+
+                // Store timeout to clear on next update or unmount
+                (editor.storage as any).debounceTimeout = timeoutId;
+            }
         },
         onSelectionUpdate: ({ editor }) => {
             if (!isSourceMode && !isRestoring.current) {
