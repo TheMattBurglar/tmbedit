@@ -12,13 +12,8 @@ export const getSanitizedMarkdown = (editor: Editor): string => {
 
     // Sanitize the generated markdown to fix serializer issues
     newContent = newContent
-        .replace(/\\\*&gt;/g, '>')
-        .replace(/\\\*>/g, '>')
-        .replace(/^\\&gt;/gm, '>')
-        .replace(/^&gt;/gm, '>')
         .replace(/&gt;/g, '>') // Global unescape of &gt; to >
-        .replace(/^\*>/gm, '>')
-        .replace(/^\*&gt;/gm, '>')
+        .replace(/&lt;/g, '<') // Global unescape of &lt; to <
         .replace(/^>$/gm, '> ')
         // Fix blank lines between blockquotes (Tiptap serializes empty blockquote lines as blank)
         .replace(/(^>.*$)\n\n(^>)/gm, '$1\n> \n$2');

@@ -4,6 +4,7 @@ import { Markdown } from 'tiptap-markdown';
 import { useEffect, useRef, useState } from 'react';
 import CharacterCount from '@tiptap/extension-character-count';
 import { SpellCheck } from '../extensions/SpellCheck';
+import { CenteredText } from '../extensions/CenteredText';
 import { getSanitizedMarkdown } from '../utils/markdown';
 
 import ContextMenu from './ContextMenu';
@@ -39,7 +40,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
         extensions: [
             StarterKit,
             Markdown.configure({
-                html: false,
+                html: true,
                 transformPastedText: true,
                 transformCopiedText: true,
                 tightLists: false,
@@ -48,6 +49,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
             // Typography,
             CharacterCount,
             SpellCheck,
+            CenteredText,
             Extension.create({
                 name: 'tabKey',
                 addKeyboardShortcuts() {

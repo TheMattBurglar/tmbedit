@@ -29,6 +29,12 @@ const IconSettings = () => (
 const IconQuestion = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
 );
+const IconUndo = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+);
+const IconRedo = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>
+);
 
 
 function App() {
@@ -239,42 +245,29 @@ function App() {
 
           <div className="separator-vertical"></div>
 
-          <div className="cheatsheet-wrapper" style={{ position: 'relative' }} ref={cheatsheetRef}>
-            <button
-              className={`toolbar-btn ${showCheatsheet ? 'active' : ''}`}
-              onClick={() => setShowCheatsheet(!showCheatsheet)}
-              title="Markdown Cheatsheet"
-            >
-              <IconQuestion />
-            </button>
-            {showCheatsheet && (
-              <div className="cheatsheet-menu">
-                <div className="cheatsheet-grid">
-                  <span>Bold</span> <code>**text**</code>
-                  <span>Italic</span> <code>*text*</code>
-                  <span>H1</span> <code># Text</code>
-                  <span>H2</span> <code>## Text</code>
-                  <span>Blockquote</span> <code>&gt; text</code>
-                  <span>List (Bullet)</span> <code>- item</code>
-                  <span>List (Ordered)</span> <code>1. item</code>
-                  <span>Code (Inline)</span> <code>`text`</code>
-                  <span>Code (Block)</span> <code style={{ whiteSpace: 'pre' }}>{`\`\`\`
-block
-\`\`\``}</code>
-                  <span>Horizontal Rule</span> <code>---</code>
-                  <span>Link</span> <code>[text](url)</code>
-                  <span>Image</span> <code>![alt](url)</code>
-                </div>
-              </div>
-            )}
-          </div>
           <button
-            className={`toolbar-btn ${editor && editor.isActive('italic') ? 'active' : ''}`}
-            onClick={() => editor?.chain().focus().toggleItalic().run()}
-            disabled={isSourceMode || !editor}
-            title="Italic (Ctrl+I)"
+            className="toolbar-btn"
+            onClick={() => editor?.chain().focus().undo().run()}
+            disabled={isSourceMode || !editor || !editor.can().undo()}
+            title="Undo"
           >
-            <span style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '1.2em' }}>I</span>
+            <IconUndo />
+          </button>
+          <button
+            className="toolbar-btn"
+            onClick={() => editor?.chain().focus().redo().run()}
+            disabled={isSourceMode || !editor || !editor.can().redo()}
+            title="Redo"
+          >
+            <IconRedo />
+          </button>
+          <button
+            className={`toolbar-btn ${editor && editor.isActive('centered') ? 'active' : ''}`}
+            onClick={() => editor?.chain().focus().toggleCentered().run()}
+            disabled={isSourceMode || !editor}
+            title="Center Text"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>
           </button>
         </div>
 
@@ -294,6 +287,36 @@ block
           </button>
 
           <div className="separator-vertical"></div>
+
+          <div className="cheatsheet-wrapper" style={{ position: 'relative' }} ref={cheatsheetRef}>
+            <button
+              className={`toolbar-btn ${showCheatsheet ? 'active' : ''}`}
+              onClick={() => setShowCheatsheet(!showCheatsheet)}
+              title="Markdown Cheatsheet"
+            >
+              <IconQuestion />
+            </button>
+            {showCheatsheet && (
+              <div className="cheatsheet-menu" style={{ right: 0, left: 'auto' }}>
+                <div className="cheatsheet-grid">
+                  <span>Bold</span> <code>**text**</code>
+                  <span>Italic</span> <code>*text*</code>
+                  <span>H1</span> <code># Text</code>
+                  <span>H2</span> <code>## Text</code>
+                  <span>Blockquote</span> <code>&gt; text</code>
+                  <span>List (Bullet)</span> <code>- item</code>
+                  <span>List (Ordered)</span> <code>1. item</code>
+                  <span>Code (Inline)</span> <code>`text`</code>
+                  <span>Code (Block)</span> <code style={{ whiteSpace: 'pre' }}>{`\`\`\`
+block
+\`\`\``}</code>
+                  <span>Horizontal Rule</span> <code>---</code>
+                  <span>Link</span> <code>[text](url)</code>
+                  <span>Image</span> <code>![alt](url)</code>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="settings-wrapper" style={{ position: 'relative' }} ref={settingsRef}>
             <button
