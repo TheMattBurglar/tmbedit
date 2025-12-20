@@ -1,11 +1,11 @@
 # tmbedit
 
-**tmbedit** is a minimal, distraction-free Markdown editor designed for creative writers who want to focus on their words. Built with performance and privacy in mind, it combines the speed of a native application with the flexibility of modern web technologies.
+**tmbedit** is a minimal, distraction-free Markdown editor designed for creative writers working on the first draft of a project. Built with performance and privacy in mind, it combines the speed of a native application with the flexibility of modern web technologies.
 
 ## Features
 
 - **Hybrid Editing Modes**: Switch seamlessly between a rich **WYSIWYG** (What You See Is What You Get) interface and a raw **Source Mode** for full control over your Markdown.
-- **Convert Rich Text to Markdown**: A useful perk of the way this app handles the conversion of markdown to rich text and back again (on the fly) is that you can copy rich text from your web browser, and paste it into the **WYSIWYG** mode, switch to **Source Mode**, and now all that text will have been converted to standard Markdown.
+- **Convert Rich Text to Markdown**: A useful perk of the way this app handles the conversion of markdown to rich text and back again is that you can copy rich text from your web browser, and paste it into the **WYSIWYG** mode, switch to **Source Mode**, and now all that text will have been converted to standard Markdown.
 - **Distraction-Free UI**: A clean, minimal interface that gets out of your way.
 - **Native Performance**: Built with **Rust** and **Tauri**, ensuring a lightweight footprint and blazing fast startup times.
 - **Offline & Local**: Your files stay on your machine. No cloud sync required.
