@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import CharacterCount from '@tiptap/extension-character-count';
 import { SpellCheck } from '../extensions/SpellCheck';
 import { CenteredText } from '../extensions/CenteredText';
-import { getSanitizedMarkdown } from '../utils/markdown';
+import { getSanitizedMarkdown, sanitizeMarkdown } from '../utils/markdown';
 
 import ContextMenu from './ContextMenu';
 import CodeEditor from 'react-simple-code-editor';
@@ -141,17 +141,7 @@ const Editor = ({ content, onChange, isSourceMode, onStatsChange, onEditorReady 
             isRestoring.current = true;
 
             // Sanitize content to fix common parsing issues
-            const sanitized = content
-                .replace(/^>  /gm, '> ')
-                .replace(/\\\*&gt;/g, '>') // Matches \*&gt; ? No, wait. /\\/ matches \. /\*/ matches *. So /\\\*/ matches \*.
-                .replace(/\\\\*&gt;/g, '>') // Try matching literal backslash explicitly
-                .replace(/\\\*>/g, '>')
-                .replace(/^\\&gt;/gm, '>')
-                .replace(/^&gt;/gm, '>')
-                .replace(/&gt;/g, '>') // Global unescape of &gt; to >
-                .replace(/^\*>/gm, '>')      // Handle *> at start of line
-                .replace(/^\*&gt;/gm, '>')   // Handle *&gt; at start of line
-                .replace(/^>$/gm, '> '); // Normalize bare > to > with space
+            const sanitized = sanitizeMarkdown(content);
 
             editor.commands.setContent(sanitized);
 
