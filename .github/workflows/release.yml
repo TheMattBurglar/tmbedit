@@ -14,10 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Silicon macs
-            args: "--target aarch64-apple-darwin"
-          - platform: "macos-12" # for Intel macs
-            args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04"
             args: ""
           - platform: "windows-latest"
@@ -34,8 +30,6 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-13' && 'x86_64-apple-darwin' || matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
         if: startsWith(matrix.platform, 'ubuntu')
@@ -58,16 +52,6 @@ jobs:
             clang \
             libclang-dev \
             llvm-dev
-
-      - name: install dependencies (macos only)
-        if: startsWith(matrix.platform, 'macos')
-        run: |
-          brew install hunspell pkg-config llvm
-          # Ensure pkg-config can find hunspell
-          echo "PKG_CONFIG_PATH=$(brew --prefix)/opt/hunspell/lib/pkgconfig" >> $GITHUB_ENV
-          # Set LIBCLANG_PATH for bindgen
-          echo "LIBCLANG_PATH=$(brew --prefix llvm)/lib" >> $GITHUB_ENV
-          echo "PATH=$(brew --prefix llvm)/bin:$PATH" >> $GITHUB_ENV
 
       - name: install frontend dependencies
         run: npm install
