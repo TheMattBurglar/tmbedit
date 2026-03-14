@@ -218,16 +218,16 @@ body {
   margin: 0 auto;
   font-size: var(--editor-font-size);
   font-family: var(--editor-font-family);
-  line-height: 1.7;
+  line-height: 1.5;
   color: var(--text-color);
 }
 
 .ProseMirror>*+* {
-  margin-top: 0.75em;
+  margin-top: 0.4em;
 }
 
 .ProseMirror p {
-  margin-bottom: 1em;
+  margin-bottom: 0.6em;
 }
 
 .ProseMirror h1,
@@ -237,8 +237,8 @@ body {
 .ProseMirror h5,
 .ProseMirror h6 {
   line-height: 1.2;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  margin-top: 1.0em;
+  margin-bottom: 0.4em;
   font-weight: 700;
   color: var(--headers-color);
 }
@@ -266,7 +266,7 @@ body {
 .ProseMirror ul,
 .ProseMirror ol {
   padding: 0 1.5rem;
-  margin-bottom: 1em;
+  margin-bottom: 0.6em;
 }
 
 .ProseMirror ul {
@@ -286,7 +286,7 @@ body {
 }
 
 .ProseMirror li {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.25em;
 }
 
 .ProseMirror blockquote {
@@ -605,4 +605,106 @@ button {
   border-radius: 4px;
   font-family: 'Fira Code', 'Roboto Mono', monospace;
   font-size: 0.85rem;
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  /* Hide UI elements */
+  .toolbar,
+  .footer,
+  .settings-wrapper,
+  .cheatsheet-wrapper,
+  .notification-toast,
+  .context-menu {
+    display: none !important;
+  }
+
+  /* Disable spell check highlights in print */
+  .spell-error {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    background-color: transparent !important;
+  }
+
+  /* Reset layout for printing */
+  .app-container,
+  .editor-container,
+  .editor-wrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body {
+    background-color: white !important;
+    color: black !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .ProseMirror {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    font-size: 10pt !important;
+    line-height: 1.55 !important;
+  }
+
+  /* Hide the cursor in print */
+  .ProseMirror .ProseMirror-cursor,
+  .ProseMirror-focused .ProseMirror-cursor {
+    display: none !important;
+    visibility: hidden !important;
+    border: none !important;
+  }
+
+  /* Hide selection markers if any */
+  ::selection {
+    background: transparent !important;
+  }
+
+  .ProseMirror>*+* {
+    margin-top: 0.5em !important;
+  }
+
+  .ProseMirror p {
+    margin-bottom: 0.5em !important;
+  }
+
+  .ProseMirror h1,
+  .ProseMirror h2,
+  .ProseMirror h3,
+  .ProseMirror h4,
+  .ProseMirror h5,
+  .ProseMirror h6 {
+    margin-top: 1.0em !important;
+    margin-bottom: 0.5em !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Handle page breaks for long documents */
+  p, h1, h2, h3, h4, li, blockquote, pre {
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Source mode printing support */
+  .source-editor-container {
+    padding: 0 !important;
+    background-color: white !important;
+  }
+
+  .source-editor-code {
+    background-color: white !important;
+    color: black !important;
+  }
 }

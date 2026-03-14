@@ -8,8 +8,8 @@ import { Editor as TiptapEditor } from '@tiptap/react';
 import { getSanitizedMarkdown } from './utils/markdown';
 
 // Icons
-const IconNew = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+const IconPrint = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
 );
 const IconOpen = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 13h6m-3-3v6m-9 1V7a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -38,7 +38,7 @@ const IconRedo = () => (
 
 
 function App() {
-  const [content, setContent] = useState("# Welcome to your new editor\n\nStart typing...");
+  const [content, setContent] = useState("");
   const [isSourceMode, setIsSourceMode] = useState(false);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [stats, setStats] = useState({ words: 0, characters: 0, misspelled: 0 });
@@ -141,13 +141,8 @@ function App() {
   }, [fontSize, fontFamily, theme]);
 
 
-  const handleNew = async () => {
-    // TODO: Check for unsaved changes?
-    setContent("");
-    setFilePath(null);
-    if (editor) {
-      editor.commands.setContent("");
-    }
+  const handlePrint = () => {
+    window.print();
   };
 
   const handleOpen = async () => {
@@ -206,16 +201,16 @@ function App() {
         if (event.key === 'q') {
           event.preventDefault();
           await invoke('exit_app');
-        } else if (event.key === 's') {
+        } else if (event.key === 'p') {
           event.preventDefault();
-          await handleSave();
+          handlePrint();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSave]);
+  }, [handleSave, handlePrint]);
 
   return (
     <div className="app-container">
@@ -276,14 +271,14 @@ function App() {
         </div>
 
         <div className="toolbar-group">
-          <button className="toolbar-btn" onClick={handleNew} title="New Document">
-            <IconNew />
-          </button>
           <button className="toolbar-btn" onClick={handleOpen} title="Open File">
             <IconOpen />
           </button>
           <button className="toolbar-btn" onClick={handleSave} title="Save File">
             <IconSave />
+          </button>
+          <button className="toolbar-btn" onClick={handlePrint} title="Print / Export PDF">
+            <IconPrint />
           </button>
 
           <div className="separator-vertical"></div>
