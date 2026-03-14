@@ -39,20 +39,36 @@ jobs:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: matrix.platform == 'ubuntu-22.01' || matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libhunspell-dev \
+            libgtk-3-dev \
+            pkg-config
+
+      - name: install dependencies (macos only)
+        if: matrix.platform == 'macos-latest'
+        run: brew install hunspell
 
       - name: install frontend dependencies
-        run: npm install
+        run: npm ci
         working-directory: ./tmbedit
 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: tmbedit-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          tagName: tmbedit-v__VERSION__
           releaseName: "tmbedit v__VERSION__"
           releaseBody: "See the assets below to download the latest version of tmbedit."
           releaseDraft: true
